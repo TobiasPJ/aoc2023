@@ -10,7 +10,6 @@ module Part1 where
     part2 :: IO ()
     part2 = do
         contents <- readFile "/home/tobias/git/aoc2023/day1/input.txt"
-        print (map replaceDigitWordInString (words contents))
         print (sum (getNums (map replaceDigitWordInString (words contents))))
 
 
