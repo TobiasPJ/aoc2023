@@ -1,4 +1,4 @@
-module Part1 where
+module Day1 where
 
 import Data.Char (isDigit, ord)
 
