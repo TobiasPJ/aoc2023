@@ -9,10 +9,30 @@ part1 = do
   contents <- readFile "/Users/tobiaspetterssonjensen/Desktop/git/aoc2023/day2/input"
   print (sum (rejectNonPossibleGames (map (\x -> checkGame x 14 13 12) (lines contents))))
 
+part2 :: IO ()
+part2 = do
+  contents <- readFile "/Users/tobiaspetterssonjensen/Desktop/git/aoc2023/day2/input"
+  print (sum (map gamePower (lines contents)))
+
 rejectNonPossibleGames :: [(Bool, Int)] -> [Int]
 rejectNonPossibleGames [] = []
 rejectNonPossibleGames ((False, _) : r) = rejectNonPossibleGames r
 rejectNonPossibleGames ((True, gameId) : r) = gameId : rejectNonPossibleGames r
+
+gamePower :: String -> Int
+gamePower g = do
+  let [_, game] = splitOn g ':'
+  let sets = map trim (splitOn (trim game) ';')
+  let amounts = concatMap getSetAmounts sets
+  let bAmounts = map snd (filter (\(colour, a) -> colour == "blue") amounts)
+  let gAmounts = map snd (filter (\(colour, a) -> colour == "green") amounts)
+  let rAmounts = map snd (filter (\(colour, a) -> colour == "red") amounts)
+  maximum bAmounts * maximum gAmounts * maximum rAmounts
+
+getSetAmounts :: String -> [(String, Int)]
+getSetAmounts s = do
+  let amounts = map trim (splitOn s ',')
+  map (getAmount . (`splitOn` ' ')) amounts
 
 checkGame :: String -> Int -> Int -> Int -> (Bool, Int)
 checkGame g mb mg mr = do
@@ -27,10 +47,13 @@ checkSet s mb mg mr = do
   all ((\x -> checkAmount x mb mg mr) . (`splitOn` ' ')) cAmounts
 
 checkAmount :: [String] -> Int -> Int -> Int -> Bool
-checkAmount [amount, 'b' : 'l' : 'u' : 'e' : _] mb _ _ = strToInt amount <= mb
-checkAmount [amount, 'g' : 'r' : 'e' : 'e' : 'n' : _] _ mg _ = strToInt amount <= mg
-checkAmount [amount, 'r' : 'e' : 'd' : _] _ _ mr = strToInt amount <= mr
+checkAmount [amount, "blue"] mb _ _ = strToInt amount <= mb
+checkAmount [amount, "green"] _ mg _ = strToInt amount <= mg
+checkAmount [amount, "red"] _ _ mr = strToInt amount <= mr
 checkAmount [_, _] _ _ _ = False
+
+getAmount :: [String] -> (String, Int)
+getAmount [amount, colour] = (colour, strToInt amount)
 
 getGameId :: String -> String
 getGameId (':' : _) = []
