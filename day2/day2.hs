@@ -34,7 +34,7 @@ gamePower g = do
 getSetAmounts :: String -> [(String, Int)]
 getSetAmounts s = do
   let amounts = map trim (splitOn s ',')
-  map (getAmount . (`splitOn` ' ')) amounts
+  map ((\[amount, colour] -> (colour, strToInt amount)) . (`splitOn` ' ')) amounts
 
 checkGame :: String -> Int -> Int -> Int -> (Bool, Int)
 checkGame g mb mg mr = do
@@ -53,9 +53,6 @@ checkAmount [amount, "blue"] mb _ _ = strToInt amount <= mb
 checkAmount [amount, "green"] _ mg _ = strToInt amount <= mg
 checkAmount [amount, "red"] _ _ mr = strToInt amount <= mr
 checkAmount [_, _] _ _ _ = False
-
-getAmount :: [String] -> (String, Int)
-getAmount [amount, colour] = (colour, strToInt amount)
 
 getGameId :: String -> String
 getGameId (':' : _) = []
