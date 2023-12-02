@@ -7,7 +7,9 @@ import Distribution.Utils.String (trim)
 part1 :: IO ()
 part1 = do
   contents <- readFile "/Users/tobiaspetterssonjensen/Desktop/git/aoc2023/day2/input"
-  print (sum (rejectNonPossibleGames (map (\x -> checkGame x 14 13 12) (lines contents))))
+  let games = map (\g -> checkGame g 14 13 12) (lines contents)
+  let possibleGames = map snd (filter fst games)
+  print (sum possibleGames)
 
 part2 :: IO ()
 part2 = do
